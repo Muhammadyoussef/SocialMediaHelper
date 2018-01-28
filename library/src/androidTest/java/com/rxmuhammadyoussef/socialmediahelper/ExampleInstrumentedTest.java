@@ -1,4 +1,4 @@
-package com.rxmuhammadyoussef.social_media_helper;
+package com.rxmuhammadyoussef.socialmediahelper;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
