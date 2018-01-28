@@ -20,13 +20,18 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "library/build.gradle" }}
-      - run:
-          name: Run Tests
-          command: ./gradlew lint test
-          command: ./gradlew pmd test
-          command: ./gradlew findBugs test
-          command: ./gradlew assembleDebug
-          command: ./gradlew test
+      - script:
+          - ./gradlew lint test
+          - ./gradlew pmd test
+          - ./gradlew findBugs test
+          - ./gradlew build jacocoTestReport assembleAndroidTest
+          - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+          - emulator -avd test -no-skin -no-audio -no-window &
+          - android-wait-for-emulator
+          - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
+          - ./gradlew connectedCheck
+      after_success:
+          - bash <(curl -s https://codecov.io/bash)
       - store_artifacts:
           path: library/build/reports/
           destination: reports
