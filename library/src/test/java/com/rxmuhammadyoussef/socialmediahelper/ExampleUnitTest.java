@@ -1,4 +1,4 @@
-package com.rxmuhammadyoussef.social_media_helper;
+package com.rxmuhammadyoussef.socialmediahelper;
 
 import org.junit.Test;
 
