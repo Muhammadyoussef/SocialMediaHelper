@@ -1,16 +1,19 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
+apply from: "$project.rootDir/tools/gradle/script/git-version.gradle"
+apply from: "$project.rootDir/tools/gradle/script/quality.gradle"
+apply from: "$project.rootDir/tools/gradle/script/java-code-coverage.gradle"
 
 android {
     compileSdkVersion deps.build.compileSdkVersion
     buildToolsVersion deps.build.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.rxmuhammadyoussef.socialmediahelper"
         minSdkVersion deps.build.minSdkVersion
         targetSdkVersion deps.build.targetSdkVersion
         versionCode deps.build.versionCode
         versionName deps.build.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -37,11 +40,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(":library")
-
-    //Android
-    implementation deps.support.appcompat
-    implementation deps.support.constraintlayout
 
     // Testing
     testImplementation deps.test.junit

@@ -1,1 +1,1 @@
-include ':sample', ':social-media-helper'
+include ':sample', ':library'

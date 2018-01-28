@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SocialMediaHelper.iml" filepath="$PROJECT_DIR$/SocialMediaHelper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library/social-media-helper.iml" filepath="$PROJECT_DIR$/library/social-media-helper.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
-      <module fileurl="file://$PROJECT_DIR$/social-media-helper/social-media-helper.iml" filepath="$PROJECT_DIR$/social-media-helper/social-media-helper.iml" />
     </modules>
   </component>
 </project>
