@@ -11,6 +11,7 @@ public class AppController extends Application {
         super.onCreate();
         SocialMediaHelper.init(this)
                 .withFacebookProvider()
+                .withTwitterProvider(getString(R.string.twitter_consumer_key), getString(R.string.twitter_consumer_secret))
                 .create();
     }
 }

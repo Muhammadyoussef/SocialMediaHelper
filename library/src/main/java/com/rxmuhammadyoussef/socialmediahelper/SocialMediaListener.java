@@ -4,11 +4,9 @@ import com.rxmuhammadyoussef.socialmediahelper.model.User;
 
 public interface SocialMediaListener {
 
-    void onLoggedIn(User userInfo);
+    void onLoggedIn(@Provider int provider, User userInfo);
 
-    void onCancel();
+    void onLoggedOut(@Provider int provider);
 
-    void onError(Exception e);
-
-    void onLoggedOut();
+    void onError(@Provider int provider, Exception e);
 }
