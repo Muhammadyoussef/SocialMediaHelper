@@ -43,6 +43,7 @@ dependencies {
 
     //Social SDKs
     implementation deps.social.facebook
+    implementation deps.social.twitter
 
     // Testing
     testImplementation deps.test.junit

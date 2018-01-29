@@ -9,21 +9,18 @@ public class User implements Parcelable {
 
     private final String accessToken;
     private final String userId;
-    private final String firstName;
-    private final String lastName;
     private final String email;
+    private final String userName;
 
     public User(
             String accessToken,
             String userId,
-            String firstName,
-            String lastName,
+            String userName,
             String email) {
-        this.userId = userId;
         this.accessToken = accessToken;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.userId = userId;
         this.email = email;
+        this.userName = userName;
     }
 
     @NonNull
@@ -37,27 +34,21 @@ public class User implements Parcelable {
     }
 
     @NonNull
-    public String getFirstName() {
-        return firstName;
+    public String getEmail() {
+        return email;
     }
 
     @NonNull
-    public String getLastName() {
-        return lastName;
-    }
-
-    @Nullable
-    public String getEmail() {
-        return email;
+    public String getUserName() {
+        return userName;
     }
 
     @Override
     public String toString() {
         return "AccessToken: " + accessToken
                 .concat("\nUser ID: " + userId)
-                .concat("\nFirst name: " + firstName)
-                .concat("\nLast name: " + lastName)
-                .concat("\nEmail: " + email);
+                .concat("\nEmail: " + email)
+                .concat("\nUsername: " + userName);
     }
 
     @Override
@@ -67,17 +58,15 @@ public class User implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.accessToken);
         dest.writeString(this.userId);
-        dest.writeString(this.firstName);
-        dest.writeString(this.lastName);
         dest.writeString(this.email);
+        dest.writeString(this.userName);
     }
 
     protected User(Parcel in) {
         this.accessToken = in.readString();
         this.userId = in.readString();
-        this.firstName = in.readString();
-        this.lastName = in.readString();
         this.email = in.readString();
+        this.userName = in.readString();
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {

@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.rxmuhammadyoussef.socialmediahelper.Provider;
 import com.rxmuhammadyoussef.socialmediahelper.SocialMediaListener;
 import com.rxmuhammadyoussef.socialmediahelper.model.User;
 import com.rxmuhammadyoussef.socialmediahelper.util.Preconditions;
@@ -23,13 +25,13 @@ import java.util.HashSet;
  TODO: Add class header
  */
 
-public class FacebookRequest {
+public class FacebookHelper {
 
     private final SocialMediaListener socialMediaListener;
     private final ArrayList<String> readPermissions;
     private final CallbackManager callbackManager = CallbackManager.Factory.create();
 
-    private FacebookRequest(@NonNull SocialMediaListener facebookListener, ArrayList<String> readPermissions) {
+    private FacebookHelper(@NonNull SocialMediaListener facebookListener, ArrayList<String> readPermissions) {
         this.socialMediaListener = facebookListener;
         this.readPermissions = readPermissions;
         registerCallBack(callbackManager);
@@ -44,12 +46,11 @@ public class FacebookRequest {
 
             @Override
             public void onCancel() {
-                socialMediaListener.onCancel();
             }
 
             @Override
             public void onError(FacebookException error) {
-                socialMediaListener.onError(error);
+                socialMediaListener.onError(Provider.FACEBOOK, error);
             }
         });
     }
@@ -66,20 +67,18 @@ public class FacebookRequest {
                     user = new User(
                             loginResult.getAccessToken().getToken(),
                             jsonObject.getString("id"),
-                            jsonObject.getString("first_name"),
-                            jsonObject.getString("last_name"),
+                            jsonObject.getString("first_name").concat(" ").concat(jsonObject.getString("last_name")),
                             jsonObject.getString("email"));
                 } else {
                     user = new User(
                             loginResult.getAccessToken().getToken(),
                             jsonObject.getString("id"),
-                            jsonObject.getString("first_name"),
-                            jsonObject.getString("last_name"),
+                            jsonObject.getString("first_name").concat(" ").concat(jsonObject.getString("last_name")),
                             "");
                 }
-                socialMediaListener.onLoggedIn(user);
+                socialMediaListener.onLoggedIn(Provider.FACEBOOK, user);
             } catch (Exception e) {
-                socialMediaListener.onError(e);
+                socialMediaListener.onError(Provider.FACEBOOK, e);
             }
         });
         Bundle parameters = new Bundle();
@@ -93,40 +92,35 @@ public class FacebookRequest {
         LoginManager.getInstance().logInWithReadPermissions(activity, readPermissions);
     }
 
-    public void login(Fragment fragment) {
-        Preconditions.checkNotNull(fragment);
-        LoginManager.getInstance().logInWithReadPermissions(fragment, readPermissions);
+    public boolean isSessionActive(){
+        return AccessToken.getCurrentAccessToken() != null;
     }
 
     public void logout() {
         LoginManager.getInstance().logOut();
-        socialMediaListener.onLoggedOut();
+        socialMediaListener.onLoggedOut(Provider.FACEBOOK);
     }
 
-    public static class RequestBuilder {
+    public static class Builder {
 
         private SocialMediaListener socialMediaListener;
 
         private final HashSet<String> readPermissions;
 
-        public RequestBuilder(SocialMediaListener socialMediaListener) {
+        public Builder(SocialMediaListener socialMediaListener) {
             Preconditions.checkNotNull(socialMediaListener);
             this.socialMediaListener = socialMediaListener;
-            readPermissions = new HashSet<>();
+            this.readPermissions = new HashSet<>();
+            this.readPermissions.add("public_profile");
         }
 
-        public RequestBuilder getPublicProfile() {
-            readPermissions.add("public_profile");
-            return this;
-        }
-
-        public RequestBuilder getEmail() {
+        public Builder getEmail() {
             readPermissions.add("email");
             return this;
         }
 
-        public FacebookRequest build() {
-            return new FacebookRequest(socialMediaListener, new ArrayList<>(readPermissions));
+        public FacebookHelper build() {
+            return new FacebookHelper(socialMediaListener, new ArrayList<>(readPermissions));
         }
     }
 }

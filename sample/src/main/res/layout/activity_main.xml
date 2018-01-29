@@ -7,13 +7,25 @@
     tools:context="com.rxmuhammadyoussef.demo.MainActivity">
 
     <Button
-        android:onClick="loginByFacebook"
+        android:id="@+id/btn_facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onFacebookClick"
         android:text="Login by Facebook"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_twitter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_twitter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onTwitterClick"
+        android:text="Login by Twitter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/btn_facebook"
+        app:layout_constraintEnd_toEndOf="@id/btn_facebook"
+        app:layout_constraintTop_toBottomOf="@id/btn_facebook" />
 
 </android.support.constraint.ConstraintLayout>
