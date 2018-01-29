@@ -1,7 +1,6 @@
 package com.rxmuhammadyoussef.socialmediahelper.facebook;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -65,13 +64,11 @@ public class FacebookHelper {
                 User user;
                 if (loginResult.getRecentlyGrantedPermissions().contains("email")) {
                     user = new User(
-                            loginResult.getAccessToken().getToken(),
                             jsonObject.getString("id"),
                             jsonObject.getString("first_name").concat(" ").concat(jsonObject.getString("last_name")),
                             jsonObject.getString("email"));
                 } else {
                     user = new User(
-                            loginResult.getAccessToken().getToken(),
                             jsonObject.getString("id"),
                             jsonObject.getString("first_name").concat(" ").concat(jsonObject.getString("last_name")),
                             "");
@@ -92,7 +89,7 @@ public class FacebookHelper {
         LoginManager.getInstance().logInWithReadPermissions(activity, readPermissions);
     }
 
-    public boolean isSessionActive(){
+    public boolean isSessionActive() {
         return AccessToken.getCurrentAccessToken() != null;
     }
 

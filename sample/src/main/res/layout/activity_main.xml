@@ -23,9 +23,20 @@
         android:layout_height="wrap_content"
         android:onClick="onTwitterClick"
         android:text="Login by Twitter"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_google"
         app:layout_constraintStart_toStartOf="@id/btn_facebook"
         app:layout_constraintEnd_toEndOf="@id/btn_facebook"
         app:layout_constraintTop_toBottomOf="@id/btn_facebook" />
+
+    <Button
+        android:id="@+id/btn_google"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onGoogleClick"
+        android:text="Login by Google"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/btn_facebook"
+        app:layout_constraintEnd_toEndOf="@id/btn_facebook"
+        app:layout_constraintTop_toBottomOf="@id/btn_twitter" />
 
 </android.support.constraint.ConstraintLayout>
