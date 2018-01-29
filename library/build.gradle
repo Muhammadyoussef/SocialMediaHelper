@@ -28,6 +28,13 @@ android {
         }
     }
 
+    packagingOptions{
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
+        exclude 'META-INF/NOTICE'
+
+    }
+
     lintOptions {
         disable 'TypographyFractions', 'TypographyQuotes'
     }
@@ -44,8 +51,11 @@ dependencies {
     //Social SDKs
     implementation deps.social.facebook
     implementation deps.social.twitter
+    implementation deps.social.firebasetuth
+    implementation deps.social.googleauthservice
 
     // Testing
     testImplementation deps.test.junit
     androidTestImplementation deps.test.runner
 }
+apply plugin: 'com.google.gms.google-services'
