@@ -1,6 +1,7 @@
 package com.rxmuhammadyoussef.socialmediahelper.facebook;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,10 +10,10 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.rxmuhammadyoussef.socialmediahelper.Provider;
 import com.rxmuhammadyoussef.socialmediahelper.SocialMediaListener;
 import com.rxmuhammadyoussef.socialmediahelper.model.User;
 import com.rxmuhammadyoussef.socialmediahelper.util.Preconditions;
@@ -26,9 +27,9 @@ import java.util.HashSet;
 
 public class FacebookHelper {
 
+    private final CallbackManager callbackManager = CallbackManager.Factory.create();
     private final SocialMediaListener socialMediaListener;
     private final ArrayList<String> readPermissions;
-    private final CallbackManager callbackManager = CallbackManager.Factory.create();
 
     private FacebookHelper(@NonNull SocialMediaListener facebookListener, ArrayList<String> readPermissions) {
         this.socialMediaListener = facebookListener;
@@ -49,7 +50,7 @@ public class FacebookHelper {
 
             @Override
             public void onError(FacebookException error) {
-                socialMediaListener.onError(Provider.FACEBOOK, error);
+                socialMediaListener.onError(error);
             }
         });
     }
@@ -73,9 +74,9 @@ public class FacebookHelper {
                             jsonObject.getString("first_name").concat(" ").concat(jsonObject.getString("last_name")),
                             "");
                 }
-                socialMediaListener.onLoggedIn(Provider.FACEBOOK, user);
+                socialMediaListener.onLoggedIn(user);
             } catch (Exception e) {
-                socialMediaListener.onError(Provider.FACEBOOK, e);
+                socialMediaListener.onError(e);
             }
         });
         Bundle parameters = new Bundle();
@@ -95,7 +96,7 @@ public class FacebookHelper {
 
     public void logout() {
         LoginManager.getInstance().logOut();
-        socialMediaListener.onLoggedOut(Provider.FACEBOOK);
+        socialMediaListener.onLoggedOut();
     }
 
     public static class Builder {
@@ -104,15 +105,23 @@ public class FacebookHelper {
 
         private final HashSet<String> readPermissions;
 
-        public Builder(SocialMediaListener socialMediaListener) {
-            Preconditions.checkNotNull(socialMediaListener);
-            this.socialMediaListener = socialMediaListener;
+        public Builder(Context context) {
+            FacebookSdk.sdkInitialize(context);
             this.readPermissions = new HashSet<>();
-            this.readPermissions.add("public_profile");
         }
 
-        public Builder getEmail() {
+        public Builder requestPublicProfile() {
+            this.readPermissions.add("public_profile");
+            return this;
+        }
+
+        public Builder requestEmail() {
             readPermissions.add("email");
+            return this;
+        }
+
+        public Builder registerCallback(SocialMediaListener socialMediaListener) {
+            this.socialMediaListener = socialMediaListener;
             return this;
         }
 

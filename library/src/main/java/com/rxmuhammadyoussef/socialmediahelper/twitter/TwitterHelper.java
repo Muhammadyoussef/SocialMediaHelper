@@ -1,14 +1,17 @@
 package com.rxmuhammadyoussef.socialmediahelper.twitter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
-import com.rxmuhammadyoussef.socialmediahelper.Provider;
 import com.rxmuhammadyoussef.socialmediahelper.SocialMediaListener;
 import com.rxmuhammadyoussef.socialmediahelper.model.User;
 import com.rxmuhammadyoussef.socialmediahelper.util.Preconditions;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
@@ -16,13 +19,13 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 
 public class TwitterHelper {
 
-    private final boolean shouldGetEmail;
+    private final boolean shouldRequestEmail;
     private final TwitterAuthClient authClient;
     private final SocialMediaListener socialMediaListener;
 
     private TwitterHelper(SocialMediaListener socialMediaListener, boolean shouldGetEmail) {
         this.socialMediaListener = socialMediaListener;
-        this.shouldGetEmail = shouldGetEmail;
+        this.shouldRequestEmail = shouldGetEmail;
         this.authClient = new TwitterAuthClient();
     }
 
@@ -32,11 +35,10 @@ public class TwitterHelper {
             @Override
             public void success(Result<TwitterSession> result) {
                 TwitterSession twitterSession = result.data;
-                if (shouldGetEmail) {
+                if (shouldRequestEmail) {
                     requestEmail(twitterSession);
                 } else {
                     socialMediaListener.onLoggedIn(
-                            Provider.TWITTER,
                             new User(
                                     String.valueOf(twitterSession.getUserId()),
                                     twitterSession.getUserName(),
@@ -46,7 +48,7 @@ public class TwitterHelper {
 
             @Override
             public void failure(TwitterException exception) {
-                socialMediaListener.onError(Provider.TWITTER, exception);
+                socialMediaListener.onError(exception);
             }
         });
     }
@@ -57,7 +59,7 @@ public class TwitterHelper {
 
     public void logout() {
         TwitterCore.getInstance().getSessionManager().clearActiveSession();
-        socialMediaListener.onLoggedOut(Provider.TWITTER);
+        socialMediaListener.onLoggedOut();
     }
 
     private void requestEmail(TwitterSession twitterSession) {
@@ -65,7 +67,6 @@ public class TwitterHelper {
             @Override
             public void success(Result<String> result) {
                 socialMediaListener.onLoggedIn(
-                        Provider.TWITTER,
                         new User(
                                 String.valueOf(twitterSession.getUserId()),
                                 result.data,
@@ -74,7 +75,7 @@ public class TwitterHelper {
 
             @Override
             public void failure(TwitterException exception) {
-                socialMediaListener.onError(Provider.TWITTER, exception);
+                socialMediaListener.onError(exception);
             }
         });
     }
@@ -86,20 +87,27 @@ public class TwitterHelper {
     public static class Builder {
 
         private SocialMediaListener socialMediaListener;
-        private boolean shouldGetEmail;
+        private boolean shouldRequestEmail;
 
-        public Builder(SocialMediaListener socialMediaListener) {
-            Preconditions.checkNotNull(socialMediaListener);
-            this.socialMediaListener = socialMediaListener;
+        public Builder(Context context, String consumerKey, String consumerSecret) {
+            TwitterConfig twitterConfig = new TwitterConfig.Builder(context)
+                    .twitterAuthConfig(new TwitterAuthConfig(consumerKey, consumerSecret))
+                    .build();
+            Twitter.initialize(twitterConfig);
         }
 
-        public Builder getEmail() {
-            shouldGetEmail = true;
+        public Builder registerCallback(SocialMediaListener socialMediaListener) {
+            this.socialMediaListener = socialMediaListener;
+            return this;
+        }
+
+        public Builder requestEmail() {
+            shouldRequestEmail = true;
             return this;
         }
 
         public TwitterHelper build() {
-            return new TwitterHelper(socialMediaListener, shouldGetEmail);
+            return new TwitterHelper(socialMediaListener, shouldRequestEmail);
         }
     }
 }

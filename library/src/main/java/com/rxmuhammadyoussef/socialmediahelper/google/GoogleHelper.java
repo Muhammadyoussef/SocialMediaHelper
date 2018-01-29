@@ -10,11 +10,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.rxmuhammadyoussef.socialmediahelper.Provider;
 import com.rxmuhammadyoussef.socialmediahelper.SocialMediaListener;
 import com.rxmuhammadyoussef.socialmediahelper.model.User;
-import com.rxmuhammadyoussef.socialmediahelper.util.Preconditions;
 
 /**
  TODO: Add class header
@@ -46,21 +43,19 @@ public class GoogleHelper {
                 GoogleSignInAccount acct = task.getResult(ApiException.class);
                 if (shouldGetEmail) {
                     socialMediaListener.onLoggedIn(
-                            Provider.GOOGLE,
                             new User(
                                     acct.getId(),
                                     acct.getDisplayName(),
                                     acct.getEmail()));
                 } else {
                     socialMediaListener.onLoggedIn(
-                            Provider.GOOGLE,
                             new User(
                                     acct.getId(),
                                     acct.getDisplayName(),
                                     ""));
                 }
             } catch (ApiException e) {
-                socialMediaListener.onError(Provider.GOOGLE, e);
+                socialMediaListener.onError(e);
             }
         }
     }
@@ -71,30 +66,38 @@ public class GoogleHelper {
 
     public void logout() {
         mGoogleSignInClient.signOut();
-        socialMediaListener.onLoggedOut(Provider.GOOGLE);
+        socialMediaListener.onLoggedOut();
     }
 
     public static class Builder {
 
         private SocialMediaListener socialMediaListener;
         private boolean shouldGetEmail;
-        private GoogleSignInOptions.Builder builder;
+        private GoogleSignInOptions.Builder googleSignInOptionsBuilder;
 
-        public Builder(SocialMediaListener socialMediaListener) {
-            Preconditions.checkNotNull(socialMediaListener);
-            this.socialMediaListener = socialMediaListener;
-            this.builder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN);
+        public Builder() {
+            this.googleSignInOptionsBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN);
         }
 
-        public Builder getEmail() {
+        public Builder registerCallback(SocialMediaListener socialMediaListener) {
+            this.socialMediaListener = socialMediaListener;
+            return this;
+        }
+
+        public Builder requestPublicProfile() {
+            googleSignInOptionsBuilder.requestProfile();
+            return this;
+        }
+
+        public Builder requestEmail() {
             shouldGetEmail = true;
-            builder.requestEmail();
+            googleSignInOptionsBuilder.requestEmail();
             return this;
         }
 
         public GoogleHelper build() {
             return new GoogleHelper(socialMediaListener,
-                    builder.requestProfile().build(),
+                    googleSignInOptionsBuilder.build(),
                     shouldGetEmail);
         }
     }
