@@ -6,95 +6,119 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.rxmuhammadyoussef.socialmediahelper.Provider;
 import com.rxmuhammadyoussef.socialmediahelper.SocialMediaListener;
 import com.rxmuhammadyoussef.socialmediahelper.facebook.FacebookHelper;
 import com.rxmuhammadyoussef.socialmediahelper.google.GoogleHelper;
 import com.rxmuhammadyoussef.socialmediahelper.model.User;
 import com.rxmuhammadyoussef.socialmediahelper.twitter.TwitterHelper;
 
-public class MainActivity extends AppCompatActivity implements SocialMediaListener {
+public class MainActivity extends AppCompatActivity {
 
-    private FacebookHelper facebookLogin;
-    private TwitterHelper twitterLogin;
-    private GoogleHelper googleLogin;
+    private FacebookHelper facebookHelper;
+    private TwitterHelper twitterHelper;
+    private GoogleHelper googleHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        facebookLogin = new FacebookHelper.Builder(this)
-                .getEmail()
-                .build();
-        twitterLogin = new TwitterHelper.Builder(this)
-                .getEmail()
-                .build();
-        googleLogin = new GoogleHelper.Builder(this)
-                .getEmail()
-                .build();
-    }
+        facebookHelper = new FacebookHelper.Builder(this)
+                .registerCallback(new SocialMediaListener() {
+                    @Override
+                    public void onLoggedIn(User userInfo) {
+                        Log.d("Muhammad", userInfo.toString());
+                        ((Button)findViewById(R.id.btn_facebook)).setText("Logout from Facebook");
+                    }
 
-    public void onTwitterClick(View view) {
-        if (twitterLogin.isSessionActive()) {
-            twitterLogin.logout();
-        } else {
-            twitterLogin.login(this);
-        }
+                    @Override
+                    public void onLoggedOut() {
+                        Log.d("Muhammad", "Logged out");
+                        ((Button)findViewById(R.id.btn_facebook)).setText("Login by Facebook");
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("Muhammad", e.getMessage());
+                    }
+                })
+                .requestPublicProfile()
+                .requestEmail()
+                .build();
+        twitterHelper = new TwitterHelper.Builder(this, getString(R.string.twitter_consumer_key), getString(R.string.twitter_consumer_secret))
+                .registerCallback(new SocialMediaListener() {
+                    @Override
+                    public void onLoggedIn(User userInfo) {
+                        Log.d("Muhammad", userInfo.toString());
+                        ((Button)findViewById(R.id.btn_twitter)).setText("Logout from Twitter");
+                    }
+
+                    @Override
+                    public void onLoggedOut() {
+                        Log.d("Muhammad", "Logged out");
+                        ((Button)findViewById(R.id.btn_twitter)).setText("Login by Twitter");
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("Muhammad", e.getMessage());
+                    }
+                })
+                .requestEmail()
+                .build();
+        googleHelper = new GoogleHelper.Builder()
+                .registerCallback(new SocialMediaListener() {
+                    @Override
+                    public void onLoggedIn(User userInfo) {
+                        Log.d("Muhammad", userInfo.toString());
+                        ((Button)findViewById(R.id.btn_google)).setText("Logout from Google");
+                    }
+
+                    @Override
+                    public void onLoggedOut() {
+                        Log.d("Muhammad", "Logged out");
+                        ((Button)findViewById(R.id.btn_google)).setText("Login by Google");
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("Muhammad", e.getMessage());
+                    }
+                })
+                .requestPublicProfile()
+                .requestEmail()
+                .build();
     }
 
     public void onFacebookClick(View view) {
-        if (facebookLogin.isSessionActive()) {
-            facebookLogin.logout();
+        if (facebookHelper.isSessionActive()) {
+            facebookHelper.logout();
         } else {
-            facebookLogin.login(this);
+            facebookHelper.login(this);
+        }
+    }
+
+    public void onTwitterClick(View view) {
+        if (twitterHelper.isSessionActive()) {
+            twitterHelper.logout();
+        } else {
+            twitterHelper.login(this);
         }
     }
 
     public void onGoogleClick(View view) {
-        if (googleLogin.isSessionActive(this)) {
-            googleLogin.logout();
+        if (googleHelper.isSessionActive(this)) {
+            googleHelper.logout();
         } else {
-            googleLogin.login(this);
+            googleHelper.login(this);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        facebookLogin.onActivityResult(requestCode, resultCode, data);
-        twitterLogin.onActivityResult(requestCode, resultCode, data);
-        googleLogin.onActivityResult(requestCode, resultCode, data);
+        facebookHelper.onActivityResult(requestCode, resultCode, data);
+        twitterHelper.onActivityResult(requestCode, resultCode, data);
+        googleHelper.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onLoggedIn(int provider, User userInfo) {
-        Log.d("Muhammad", "User: " + userInfo.toString());
-        if (provider == Provider.FACEBOOK) {
-            ((Button) findViewById(R.id.btn_facebook)).setText("Logout form Facebook");
-        } else if (provider == Provider.TWITTER) {
-            ((Button) findViewById(R.id.btn_twitter)).setText("Logout form Twitter");
-        }else if (provider == Provider.GOOGLE) {
-            ((Button) findViewById(R.id.btn_google)).setText("Logout form Google");
-        }
-    }
-
-    @Override
-    public void onError(int provider, Exception e) {
-        Log.d("Muhammad", "error: " + e.getMessage());
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onLoggedOut(int provider) {
-        Log.d("Muhammad", "logged out");
-        if (provider == Provider.FACEBOOK) {
-            ((Button) findViewById(R.id.btn_facebook)).setText("Login by Facebook");
-        } else if (provider == Provider.TWITTER) {
-            ((Button) findViewById(R.id.btn_twitter)).setText("Login by Twitter");
-        }else if (provider == Provider.GOOGLE) {
-            ((Button) findViewById(R.id.btn_google)).setText("Login by Google");
-        }
     }
 }
