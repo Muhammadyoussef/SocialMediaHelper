@@ -13,8 +13,10 @@ def support = [
 ]
 
 def social = [
-        facebook: 'com.facebook.android:facebook-login:4.30.0',
-        twitter : 'com.twitter.sdk.android:twitter-core:3.1.1'
+        facebook         : 'com.facebook.android:facebook-login:4.30.0',
+        twitter          : 'com.twitter.sdk.android:twitter-core:3.1.1',
+        firebasetuth     : 'com.google.firebase:firebase-auth:11.8.0',
+        googleauthservice: 'com.google.android.gms:play-services-auth:11.8.0'
 ]
 
 def test = [

@@ -38,7 +38,6 @@ public class TwitterHelper {
                     socialMediaListener.onLoggedIn(
                             Provider.TWITTER,
                             new User(
-                                    twitterSession.getAuthToken().token,
                                     String.valueOf(twitterSession.getUserId()),
                                     twitterSession.getUserName(),
                                     ""));
@@ -68,7 +67,6 @@ public class TwitterHelper {
                 socialMediaListener.onLoggedIn(
                         Provider.TWITTER,
                         new User(
-                                twitterSession.getAuthToken().token,
                                 String.valueOf(twitterSession.getUserId()),
                                 result.data,
                                 twitterSession.getUserName()));
