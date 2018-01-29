@@ -41,6 +41,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    //Social SDKs
+    implementation deps.social.facebook
+
     // Testing
     testImplementation deps.test.junit
     androidTestImplementation deps.test.runner

@@ -8,17 +8,22 @@ def build = [
 ]
 
 def support = [
-        appcompat        : 'com.android.support:appcompat-v7:27.0.2',
-        constraintlayout : 'com.android.support.constraint:constraint-layout:1.0.2'
+        appcompat       : 'com.android.support:appcompat-v7:27.0.2',
+        constraintlayout: 'com.android.support.constraint:constraint-layout:1.0.2'
+]
+
+def social = [
+        facebook: 'com.facebook.android:facebook-login:4.30.0'
 ]
 
 def test = [
-        junit   : 'junit:junit:4.12',
-        runner  : 'com.android.support.test:runner:1.0.1',
+        junit : 'junit:junit:4.12',
+        runner: 'com.android.support.test:runner:1.0.1',
 ]
 
 ext.deps = [
         build  : build,
         support: support,
+        social : social,
         test   : test,
 ]
